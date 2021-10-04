@@ -14,6 +14,8 @@ package democracy
 enum Grade:
   case Bad, Mediocre, Inadequate, Passable, Good, VeryGood, Excellent
 
+
+
 object Grade:
   /**
    * @return The median grade of a collection of grades.
@@ -31,7 +33,8 @@ object Grade:
    * - `apply` to select an element at a specific index.
    */
   def median(grades: Seq[Grade]): Grade =
-    ???
+    grades.sortBy(grade => grade.ordinal).apply(grades.size / 2)
+
 end Grade
 
 /**
@@ -73,14 +76,19 @@ case class Election(description: String, candidates: Set[Candidate]):
     // into a single sequence containing the grades assigned to each
     // candidate by the voters.
     val allGrades: Seq[(Candidate, Grade)] =
-      ???
-
+    ballots.flatMap{
+      ballot => ballot.grades.toSeq
+    }
     // Second step: use the operation `groupMap` to transform the
     // collection of pairs of `(Candidate, Grade)` into a `Map`
     // containing all the grades that were assigned to a given
     // `Candidate`.
+    val grade: (democracy.Candidate, democracy.Grade) => democracy.Grade =
+    (_, g) => g
+    val candidate: (democracy.Candidate, democracy.Grade) => democracy.Candidate =
+      (name, _) => name
     val gradesPerCandidate: Map[Candidate, Seq[Grade]] =
-      ???
+      allGrades.groupMap(candidate(_, _))(grade(_, _))
 
     findWinner(gradesPerCandidate)
   end elect
